@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+    <title>Products</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}">Main</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/products}">Products</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/orders}">Orders</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/customers}">Customers</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+
+        <div class="col-12 mt-3 50px">
+            <h3>Filter</h3>
+            <form th:action="@{/products}" method="get">
+                <div class="form-group">
+                    <label for="minPrice">Min. price</label>
+                    <input type="number" step="any" class="form-control" id="minPrice" name="min_price"
+                           th:value="${param.min_price}">
+                </div>
+                <div class="form-group">
+                    <label for="maxPrice">Max. price</label>
+                    <input type="number" step="any" class="form-control" id="maxPrice" name="max_price"
+                           th:value="${param.max_price}">
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title"
+                           th:value="${param.title}">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" class="form-control" id="category" name="category"
+                           th:value="${param.category}">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <a th:href="@{'/products/?p=' + ${productsPage.getNumber() + 1}}" class="btn btn-warning">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-12 mt-3">
+            <a class="btn btn-primary" th:href="@{/products/new}">Add Product</a>
+        </div>
+
+        <div class="col-12 50px" >
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th hidden scope="col">Id</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${productsPage.getContent()}">
+                    <th hidden th:text="${product.id}"></th>
+                    <td th:text="${product.title}"></td>
+                    <td th:text="${product.description}"></td>
+                    <td th:text="${product.price}"></td>
+                    <td th:text="${product.category.title}"></td>
+                    <td>
+                        <a class="btn btn-success" th:href="@{/products/{id}(id = ${product.id})}"><i
+                                class="fas fa-edit"></i></a>
+                        <a class="btn btn-danger" th:href="@{/products/delete/{id}(id = ${product.id})}"><i
+                                class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/products/?p='+ ${productsPage.previousOrFirstPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${productsPage.getNumber() + 1 == i ? 'active' : ''}"
+                th:each="i : ${#numbers.sequence(1, (productsPage.getTotalPages() == 0) ? 1 : productsPage.getTotalPages())}">
+                <a class="page-link" th:text="${i}" th:href="@{'/products/?p=' + ${i} + ${filters_out}}"></a>
+            </li>
+
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/products/?p='+ ${productsPage.nextOrLastPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
+

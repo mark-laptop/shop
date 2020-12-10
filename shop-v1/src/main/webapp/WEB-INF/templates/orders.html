@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+    <title>Products</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}">Main</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/products}">Products</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/orders}">Orders</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/customers}">Customers</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+
+        <div class="col-12 mt-3 50px">
+            <h3>Filter</h3>
+            <form th:action="@{/orders}" method="get">
+                <div class="form-group">
+                    <label for="recipient">Recipient</label>
+                    <input type="text" class="form-control" id="recipient" name="recipient"
+                           th:value="${param.recipient}">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address"
+                           th:value="${param.address}">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <a th:href="@{'/orders/?p=' + ${ordersPage.getNumber() + 1}}" class="btn btn-warning">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-12 mt-3">
+            <a class="btn btn-primary" th:href="@{/orders/new}">Add orders</a>
+        </div>
+
+        <div class="col-12 50px" >
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th hidden scope="col">Id</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Recipient</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Sum</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${ordersPage.getContent()}">
+                    <th hidden th:text="${order.id}"></th>
+                    <td th:text="${order.customer}"></td>
+                    <td th:text="${order.recipient}"></td>
+                    <td th:text="${order.address}"></td>
+                    <td th:text="${order.sum}"></td>
+                    <td>
+                        <a class="btn btn-success" th:href="@{/orders/{id}(id = ${order.id})}"><i
+                                class="fas fa-edit"></i></a>
+                        <a class="btn btn-danger" th:href="@{/orders/delete/{id}(id = ${order.id})}"><i
+                                class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/orders/?p='+ ${ordersPage.previousOrFirstPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${ordersPage.getNumber() + 1 == i ? 'active' : ''}"
+                th:each="i : ${#numbers.sequence(1, (ordersPage.getTotalPages() == 0) ? 1 : ordersPage.getTotalPages())}">
+                <a class="page-link" th:text="${i}" th:href="@{'/orders/?p=' + ${i} + ${filters_out}}"></a>
+            </li>
+
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/orders/?p='+ ${ordersPage.nextOrLastPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
+

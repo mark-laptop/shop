@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+    <title>Customers</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}">Main</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/products}">Products</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/orders}">Orders</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/customers}">Customers</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+
+        <div class="col-12 mt-3 50px">
+            <h3>Filter</h3>
+            <form th:action="@{/customers}" method="get">
+                <div class="form-group">
+                    <label for="first_name">First name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name"
+                           th:value="${param.first_name}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name"
+                           th:value="${param.last_name}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" id="email" name="email"
+                           th:value="${param.email}">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <a th:href="@{'/customers/?p=' + ${customersPage.getNumber() + 1}}" class="btn btn-warning">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-12 mt-3">
+            <a class="btn btn-primary" th:href="@{/customers/new}">Add Customers</a>
+        </div>
+
+        <div class="col-12 50px" >
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th hidden scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Enail</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="customer : ${customersPage.getContent()}">
+                    <th hidden th:text="${customer.id}"></th>
+                    <td th:text="${customer.firstName}"></td>
+                    <td th:text="${customer.lastName}"></td>
+                    <td th:text="${customer.email}"></td>
+                    <td>
+                        <a class="btn btn-success" th:href="@{/customers/{id}(id = ${customer.id})}"><i
+                                class="fas fa-edit"></i></a>
+                        <a class="btn btn-danger" th:href="@{/customers/delete/{id}(id = ${customer.id})}"><i
+                                class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/customers/?p='+ ${customersPage.previousOrFirstPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${customersPage.getNumber() + 1 == i ? 'active' : ''}"
+                th:each="i : ${#numbers.sequence(1, (customersPage.getTotalPages() == 0) ? 1 : customersPage.getTotalPages())}">
+                <a class="page-link" th:text="${i}" th:href="@{'/customers/?p=' + ${i} + ${filters_out}}"></a>
+            </li>
+
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{'/customers/?p='+ ${customersPage.nextOrLastPageable().getPageNumber() + 1} + ${filters_out}}"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
+
