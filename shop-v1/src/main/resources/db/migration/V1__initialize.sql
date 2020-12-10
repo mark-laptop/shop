@@ -1,3 +1,28 @@
+CREATE TABLE users
+(
+    id       BIGSERIAL PRIMARY KEY NOT NULL,
+    version  BIGINT                NOT NULL,
+    username VARCHAR(255)          NOT NULL,
+    password VARCHAR(255)          NOT NULL
+);
+CREATE INDEX IX_users_username ON users (username);
+
+CREATE TABLE roles
+(
+    id       BIGSERIAL PRIMARY KEY NOT NULL,
+    version  BIGINT                NOT NULL,
+    name VARCHAR(255)          NOT NULL
+);
+CREATE INDEX IX_roles_name ON roles (name);
+
+CREATE TABLE users_roles (
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    UNIQUE (user_id, role_id)
+);
+
 CREATE TABLE products
 (
     id          BIGSERIAL PRIMARY KEY NOT NULL,
@@ -53,16 +78,31 @@ CREATE INDEX IX_orders_address ON orders (address);
 
 CREATE TABLE order_items
 (
-    id      BIGSERIAL PRIMARY KEY NOT NULL,
-    version BIGINT                NOT NULL,
-    order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
-    quantity DECIMAL(15, 3) NOT NULL,
-    price DECIMAL(15, 2) NOT NULL,
-    sum DECIMAL(15, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    id         BIGSERIAL PRIMARY KEY NOT NULL,
+    version    BIGINT                NOT NULL,
+    order_id   BIGINT                NOT NULL,
+    product_id BIGINT                NOT NULL,
+    quantity   DECIMAL(15, 3)        NOT NULL,
+    price      DECIMAL(15, 2)        NOT NULL,
+    sum        DECIMAL(15, 2)        NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (product_id) REFERENCES products (id)
 );
+
+INSERT INTO users (version, username, password)
+VALUES
+       (0, 'user', '$2y$12$m0reT42iKtR8v/BoS4hykuZpQI9dFx.cj1u2t/R4sAEA7Qqoygqfe'),
+       (0, 'admin', '$2y$12$m0reT42iKtR8v/BoS4hykuZpQI9dFx.cj1u2t/R4sAEA7Qqoygqfe');
+
+INSERT INTO roles (version, name)
+VALUES
+       (0, 'ROLE_USER'),
+       (0, 'ROLE_ADMIN');
+
+INSERT INTO users_roles (user_id, role_id)
+VALUES
+       (1, 1),
+       (2, 2);
 
 INSERT INTO products (version, title, description, price)
 VALUES (0, 'Product 1', 'Product 1', 1000),

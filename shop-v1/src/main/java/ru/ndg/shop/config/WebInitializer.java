@@ -1,6 +1,7 @@
 package ru.ndg.shop.config;
 
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -28,6 +29,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
         encodingFilter.setForceEncoding(true);
         encodingFilter.setEncoding("UTF-8");
         HiddenHttpMethodFilter hiddenHttpMethodFilter = new HiddenHttpMethodFilter();
-        return new Filter[]{encodingFilter, hiddenHttpMethodFilter};
+        DelegatingFilterProxy filterProxy = new DelegatingFilterProxy("springSecurityFilterChain");
+        return new Filter[]{encodingFilter, hiddenHttpMethodFilter, filterProxy};
     }
 }

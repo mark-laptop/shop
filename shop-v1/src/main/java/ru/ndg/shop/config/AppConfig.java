@@ -20,7 +20,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @Configuration
 @ComponentScan(value = "ru.ndg.shop")
 @EnableWebMvc
-@Import(value = DBConfig.class)
+@Import(value = {DBConfig.class, SecurityConfig.class})
 public class AppConfig implements WebMvcConfigurer {
 
     private ApplicationContext applicationContext;
